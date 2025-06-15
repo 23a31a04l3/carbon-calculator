@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title> Carbon Calculator for Households </title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f0f8f5;
+      margin: 0;
+      padding: 20px;
+    }
+    .container {
+      max-width: 600px;
+      margin: auto;
+      background-color: #ffffff;
+      padding: 25px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+    h1 {
+      color: #2e7d32;
+      text-align: center;
+    }
+    label {
+      font-weight: bold;
+      display: block;
+      margin-top: 15px;
+    }
+    input, select, button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 8px;
+      margin-bottom: 15px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      font-size: 16px;
+    }
+    button {
+      background-color: #2e7d32;
+      color: white;
+      font-weight: bold;
+      border: none;
+      cursor: pointer;
+    }
+    .result {
+      background-color: #e8f5e9;
+      padding: 15px;
+      border-left: 6px solid #43a047;
+      border-radius: 5px;
+      margin-top: 20px;
+      font-size: 16px;
+      white-space: pre-line;
+    }
+    .impact {
+      margin-top: 20px;
+      padding: 15px;
+      background-color: #fffde7;
+      border-left: 6px solid #fbc02d;
+      border-radius: 5px;
+      font-size: 16px;
+    }
+    canvas {
+      margin-top: 30px;
+      max-width: 100%;
+    }
+    .poster {
+      margin-top: 30px;
+      text-align: center;
+    }
+    .poster img {
+      width: 100%;
+      max-width: 400px;
+      border-radius: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1>Carbon Calculator for Households </h1>
+     <img src="https://www.nps.gov/choh/learn/kidsyouth/images/What-s-your-Carbon-Footprint.jpg?maxwidth=1200&autorotate=false" alt="How Big is your Carbon Footprint ?">
+
+    <label for="electricity">Electricity Usage (kWh/month):</label>
+    <input type="number" id="electricity" placeholder="e.g. 300">
+
+    <label for="travel">Vehicle Travel (km/month):</label>
+    <input type="number" id="travel" placeholder="e.g. 500">
+
+    <label for="diet">Diet Type:</label>
+    <select id="diet">
+      <option value="veg">Vegetarian</option>
+      <option value="mixed">Mixed</option>
+      <option value="nonveg">Non-Vegetarian</option>
+    </select>
+
+    <button onclick="calculateFootprint()">Calculate </button>
+
+    <div class="result" id="output" style="display: none;"></div>
+    <canvas id="myChart" style="display: none;"></canvas>
+
+    <div class="impact" id="impactMessage" style="display: none;">
+      🌱 <strong>Small steps today lead to a greener tomorrow!</strong> <br>
+      Your choices matter — thank you for using this calculator to make a difference.
+    </div>
+
+    <div class="poster">
+      
+      <img src="https://sigbi.org/st-albans-and-district/files/carbon-footprint.jpg" alt="Reduce Carbon Poster">
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    function calculateFootprint() {
+      const electricity = parseFloat(document.getElementById("electricity").value) || 0;
+      const travel = parseFloat(document.getElementById("travel").value) || 0;
+      const diet = document.getElementById("diet").value;
+
+      const co2Electricity = electricity * 0.75;
+      const co2Travel = travel * 0.18;
+      let co2Diet = diet === "veg" ? 120 : diet === "mixed" ? 250 : 400;
+
+      const totalCO2 = co2Electricity + co2Travel + co2Diet;
+
+      let tips = "🔄 Tips to reduce your impact:";
+      if (electricity > 250) tips += "- 💡 Use energy-efficient appliances and unplug unused electronics.";
+      if (travel > 300) tips += "- 🚗 Use public transport, carpool, or switch to biking/walking when possible.";
+      if (diet === "nonveg") tips += "- 🥦 Reduce meat consumption by trying plant-based meals a few times a week.";
+      if (electricity <= 250 && travel <= 300 && diet === "veg") tips += "- ✅ Great job! You’re already following many sustainable practices.";
+
+      document.getElementById("output").style.display = "block";
+      document.getElementById("impactMessage").style.display = "block";
+      document.getElementById("output").innerText =
+        `🌍 Your estimated monthly CO₂ emissions: ${totalCO2.toFixed(2)} kg ${tips}`;
+
+      const ctx = document.getElementById('myChart').getContext('2d');
+      document.getElementById('myChart').style.display = "block";
+      new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: ['Electricity', 'Travel', 'Diet'],
+          datasets: [{
+            label: 'CO₂ Emissions (kg)',
+            data: [co2Electricity, co2Travel, co2Diet],
+            backgroundColor: ['#81c784', '#64b5f6', '#ffb74d']
+          }]
+        },
+        options: {
+          responsive: true,
+          scales: {
+            y: {
+              beginAtZero: true
+            }
+          }
+        }
+      });
+    }
+  </script>
+
+</body>
+</html>
+
